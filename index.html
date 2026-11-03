@@ -203,30 +203,30 @@ ol, ul { margin: 0; }
 .item-meta { display: flex; gap: 12px; align-items: baseline; font-size: 15px; color: var(--ink-3); letter-spacing: .08em; }
 .item-part { color: var(--zhu); }
 .item-title { margin-top: 6px; font: 400 32px/1.4 var(--song-bold); letter-spacing: .08em; outline: none; }
-.item-category { margin-top: 6px; font-size: 15px; color: var(--green); letter-spacing: .06em; }
 
-.excerpt { margin-top: 30px; }
+.excerpt { margin-top: 28px; }
 .excerpt-page { margin-top: 10px; padding: 22px 0 18px; border-top: 1px solid var(--ink-2); border-bottom: 1px solid var(--ink-2); box-shadow: 0 3px 0 -2px var(--ink-2), 0 -3px 0 -2px var(--ink-2); }
 .excerpt-body { font: 400 18px/2.05 var(--fang); letter-spacing: .03em; color: var(--ink); }
 .excerpt-body p { text-indent: 2em; text-align: justify; }
 .excerpt-body p + p { margin-top: .3em; }
 .excerpt-source { margin-top: 12px; text-align: right; font-size: 14.5px; color: var(--ink-3); }
-.style-label { margin-top: 22px; }
-.style-points { margin-top: 6px; padding: 0; list-style: none; counter-reset: sp; display: grid; gap: 8px; }
-.style-points li { counter-increment: sp; display: grid; grid-template-columns: 1.6em 1fr; font-size: 16px; line-height: 1.9; color: var(--ink); text-wrap: pretty; }
-.style-points li::before { content: counter(sp); color: var(--green); font-variant-numeric: tabular-nums; }
 
-.brief { margin-top: 28px; display: grid; gap: 18px; }
-.brief-goal { padding: 14px 18px 16px; background: var(--sheet); box-shadow: inset 3px 0 0 var(--zhu), 0 1px 2px rgba(41, 36, 30, .06); }
-.brief-goal .label { color: var(--zhu); }
-.brief-goal p { margin-top: 2px; font-size: 17px; line-height: 1.95; color: var(--ink); }
-.brief-context > p { margin-top: 2px; font-size: 16px; line-height: 1.95; color: var(--ink-2); }
-.points-wrap { margin-top: 12px; }
-.points { margin-top: 4px; padding: 0; list-style: none; counter-reset: point; display: grid; gap: 3px; font-size: 16px; line-height: 1.85; color: var(--ink); }
-.points li { counter-increment: point; display: grid; grid-template-columns: 1.6em 1fr; }
+/* 写作要求: one card holding the task and its particulars, each on a labelled row. */
+.brief { margin-top: 26px; padding: 18px 22px 16px; background: var(--sheet); box-shadow: inset 3px 0 0 var(--zhu), 0 1px 2px rgba(41, 36, 30, .06); }
+.brief-heading { font-size: 14px; line-height: 1.6; color: var(--zhu); letter-spacing: .12em; }
+.brief-goal { margin-top: 4px; font-size: 17px; line-height: 1.95; color: var(--ink); }
+.brief-list { margin: 12px 0 0; }
+.brief-row { display: grid; grid-template-columns: 4.8em minmax(0, 1fr); column-gap: 12px; align-items: baseline; padding: 10px 0 8px; border-top: 1px dashed rgba(41, 36, 30, .16); }
+.brief-row dt { font-size: 14px; line-height: 1.9; color: var(--green); letter-spacing: .08em; }
+.brief-row dd { margin: 0; font-size: 15.5px; line-height: 1.9; color: var(--ink-2); }
+.brief-avoid dt { color: var(--zhu); }
+.points, .style-points { padding: 0; list-style: none; display: grid; gap: 4px; }
+.points { counter-reset: point; color: var(--ink); }
+.style-points { counter-reset: sp; color: var(--ink); }
+.points li { counter-increment: point; display: grid; grid-template-columns: 1.5em 1fr; }
+.style-points li { counter-increment: sp; display: grid; grid-template-columns: 1.5em 1fr; text-wrap: pretty; }
 .points li::before { content: counter(point); color: var(--green); font-variant-numeric: tabular-nums; }
-.avoid { margin-top: 10px; display: flex; gap: 10px; font-size: 15px; line-height: 1.85; color: var(--ink-2); }
-.avoid b { flex: none; font-weight: 400; color: var(--zhu); letter-spacing: .1em; }
+.style-points li::before { content: counter(sp); color: var(--green); font-variant-numeric: tabular-nums; }
 
 /* The two texts on ruled paper: a faint line under every line of text. Paragraphs follow one another without extra
    space, so the text stays on the lines; the line sits just below the characters. */
@@ -395,6 +395,9 @@ ol, ul { margin: 0; }
   .welcome-actions .primary { width: 100%; }
   .item-title { font-size: 28px; }
   .excerpt-body { font-size: 17px; line-height: 2; }
+  .brief { padding: 16px 16px 10px; }
+  .brief-row { grid-template-columns: minmax(0, 1fr); padding-top: 9px; }
+  .brief-goal { font-size: 16.5px; }
   .ms-host { padding: 14px 16px 18px; margin-left: -4px; margin-right: -4px; }
   .rating { margin: 0 16px; }
   .scale { grid-template-columns: 26px 1fr; justify-content: stretch; }
@@ -829,7 +832,6 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <header class="item-head">
             <p class="item-meta"><span class="item-part" id="trial-part"></span><span class="item-number">第<span id="trial-number"></span>题</span></p>
             <h1 class="item-title" id="trial-title" tabindex="-1"></h1>
-            <p class="item-category" id="trial-category"></p>
           </header>
           <section class="excerpt" id="excerpt-wrap" hidden aria-labelledby="excerpt-heading">
             <h2 class="label" id="excerpt-heading">原文</h2>
@@ -837,17 +839,18 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
               <div class="excerpt-body" id="trial-excerpt"></div>
               <p class="excerpt-source" id="excerpt-source"></p>
             </div>
-            <h3 class="label style-label">风格要点</h3>
-            <ol class="style-points" id="style-points"></ol>
           </section>
-          <div class="brief">
-            <section class="brief-goal"><h2 class="label">要求</h2><p id="trial-goal"></p></section>
-            <section class="brief-context">
-              <h2 class="label" id="context-label">背景</h2><p id="trial-context"></p>
-              <div class="points-wrap"><h3 class="label points-label">须写到</h3><ol class="points" id="trial-points"></ol></div>
-              <p class="avoid" id="trial-avoid" hidden></p>
-            </section>
-          </div>
+          <!-- Everything the two texts are judged against, in one place: the task, then its particulars. -->
+          <section class="brief" aria-labelledby="brief-heading">
+            <h2 class="brief-heading" id="brief-heading">写作要求</h2>
+            <p class="brief-goal" id="trial-goal"></p>
+            <dl class="brief-list">
+              <div class="brief-row" id="row-style"><dt>风格要点</dt><dd><ol class="style-points" id="style-points"></ol></dd></div>
+              <div class="brief-row"><dt id="context-label">背景</dt><dd id="trial-context"></dd></div>
+              <div class="brief-row" id="row-points"><dt>须写到</dt><dd><ol class="points" id="trial-points"></ol></dd></div>
+              <div class="brief-row brief-avoid" id="row-avoid"><dt>不要</dt><dd id="trial-avoid"></dd></div>
+            </dl>
+          </section>
           <section class="opening" id="prefix-wrap" aria-labelledby="opening-label">
             <h2 class="label" id="opening-label">开头</h2>
             <div class="ms-host"><div class="manuscript" id="trial-prefix"></div></div>
@@ -1500,21 +1503,19 @@ window.createReviewDelivery = (config, invitation, storageKey, review) => {
     root.dataset.part = part;
     setText('trial-part', partInfo(part).label);
     setText('trial-number', hanNumber(numberInPart(index)));
-    setText('trial-category', trial.category);
     setText('trial-title', trial.title);
     setText('trial-goal', trial.goal);
     setText('trial-context', trial.context);
     setText('context-label', trial.context_label || (part === 'author' ? '新场景' : '背景'));
-    const points = $('trial-points');
-    points.replaceChildren(...(trial.plot_points || []).map(point => make('li', '', point)));
-    points.closest('.points-wrap').hidden = !trial.plot_points?.length;
-    const avoid = $('trial-avoid');
-    avoid.replaceChildren(...(trial.avoid ? [make('b', '', '不要'), make('span', '', trial.avoid)] : []));
-    avoid.hidden = !trial.avoid;
+    $('trial-points').replaceChildren(...(trial.plot_points || []).map(point => make('li', '', point)));
+    $('row-points').hidden = !trial.plot_points?.length;
+    setText('trial-avoid', trial.avoid || '');
+    $('row-avoid').hidden = !trial.avoid;
+    $('style-points').replaceChildren(...(trial.style_points || []).map(point => make('li', '', point)));
+    $('row-style').hidden = !trial.style_points?.length;
     $('excerpt-wrap').hidden = !trial.excerpt;
     renderZh($('trial-excerpt'), trial.excerpt || '');
     setText('excerpt-source', trial.excerpt_source || '');
-    $('style-points').replaceChildren(...(trial.style_points || []).map(point => make('li', '', point)));
     $('prefix-wrap').hidden = !trial.prefix;
     renderZh($('trial-prefix'), trial.prefix || '');
     renderZh($('text-a'), trial.candidates[0].text);
